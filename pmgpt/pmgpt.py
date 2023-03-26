@@ -62,7 +62,7 @@ def query_gpt(
               prompt='Please enter your email address (pubmed requires this)',
               help='Email address is required to query pubmed')
 @click.option('--apikey',
-              prompt='Please enter your OpenAI API key',
+              prompt='Please enter your OpenAI API key (skip to use environment variable)',
               help='OpenAI API key is required to query GPT')
 def main(topic: str,
          email: str,

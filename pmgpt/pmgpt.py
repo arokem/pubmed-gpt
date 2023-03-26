@@ -1,11 +1,13 @@
 from typing import Optional
 import click
+import http.server
+import socketserver
 
 from pymed import PubMed
 import openai
 
 
-def query_pubmed(topic: str, max_results: Optional[int]=5) -> str:
+def query_pubmed(topic: str, max_results: Optional[int] = 10) -> str:
     """
     Get abstracts for a topic from pubmed
     """
@@ -48,6 +50,18 @@ def query_gpt(
     return response["choices"][0]["message"]["content"]
 
 
+class _MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
+    def do_GET(self):
+        self.path = 'index.html'
+        return http.server.SimpleHTTPRequestHandler.do_GET(self)
+
+
+def serve(port: Optional[int] = 8000):
+    with socketserver.TCPServer(("", port), _MyHttpRequestHandler) as httpd:
+        print("Site served at port", port)
+        httpd.serve_forever()
+
+
 @click.command()
 @click.option('--topic', prompt="Please enter topic to query",
               help='Topic to query')
@@ -70,6 +84,8 @@ def main(topic: str,
 
     with open(tofile, 'w') as f:
         f.write(response)
+
+    serve()
 
 
 if __name__ == "__main__":

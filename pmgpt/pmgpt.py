@@ -1,13 +1,11 @@
 from typing import Optional
 import click
-import http.server
-import socketserver
 
 from pymed import PubMed
 import openai
 
 
-def query_pubmed(topic: str, max_results: Optional[int] = 10) -> str:
+def query_pubmed(topic: str, max_results: Optional[int] = 8) -> str:
     """
     Get abstracts for a topic from pubmed
     """
@@ -34,32 +32,22 @@ def query_gpt(
     Query pubmed and then query gpt
     """
     query = f"""
-    Please create a presentation that summarizes each of the following abstracts with at most 6 bullet points each. One slide for each of the articles. On each slide, include the title of the article, and the name of the authors. Avoid jargon.
+    Please create a presentation that summarizes each of the following abstracts with at most 6 bullet points each. One slide for each of the articles. On each slide, you must include the title of the article, and the name of the authors. Avoid jargon.
 
-    Add a slide for the title, which should be "{topic}" and a slide that summarizes all of the abstracts.
+    Add a first title slide, which must include only the title:"{topic}, as summarized by {model}".
+
+    You must also include a slide that summarizes all of the abstracts.
     {abstracts}"""
 
     response = openai.ChatCompletion.create(
-    model=model,
-    messages=[
-        {"role": "system", "content": 'You are a helpful assistant. Your response should be a remark.js presentation in markdown format.'},
-        {"role": "user", "content": query},
+        model=model,
+        messages=[
+            {"role": "system", "content": 'You are a helpful assistant. Your answers must always be a presentation in the remarkjs markdown format.'},
+            {"role": "user", "content": query},
         ]
     )
 
     return response["choices"][0]["message"]["content"]
-
-
-class _MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
-    def do_GET(self):
-        self.path = 'index.html'
-        return http.server.SimpleHTTPRequestHandler.do_GET(self)
-
-
-def serve(port: Optional[int] = 8000):
-    with socketserver.TCPServer(("", port), _MyHttpRequestHandler) as httpd:
-        print("Site served at port", port)
-        httpd.serve_forever()
 
 
 @click.command()
@@ -84,8 +72,6 @@ def main(topic: str,
 
     with open(tofile, 'w') as f:
         f.write(response)
-
-    serve()
 
 
 if __name__ == "__main__":

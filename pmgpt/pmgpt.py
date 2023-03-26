@@ -10,7 +10,7 @@ def query_pubmed(topic: str, email: str, max_results: Optional[int]=5) -> str:
     """
     Get abstracts for a topic from pubmed
     """
-    pubmed = PubMed(tool=f"pubmed-gpt-{uuid.uuid1()}", email=email)
+    pubmed = PubMed(tool=f"pmg{uuid.uuid1()}", email=email)
     pm_results = list(pubmed.query(topic, max_results=max_results))
     abstracts = """ \n""".join([
     f"""Title: {aa.title}
@@ -32,8 +32,6 @@ def query_gpt(
     """
     Query pubmed and then query gpt
     """
-    abstracts = query_pubmed(topic, email)
-
     query = f"""
     Please create a presentation that summarizes each of the following abstracts with at most 6 bullet points.
 

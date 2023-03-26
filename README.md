@@ -1,6 +1,10 @@
 # pubmed-gpt
 
-Use gpt to summarize articles from pubmed.
+Use gpt to summarize articles from pubmed as a slide presentation. The goal of
+this software is to find the top 8 articles on a topic in pubmed (based on
+pubmed's "relevance" criterion) and ask GPT to summarize the abstract of each
+article as a single slide, providing also a title slide and a summary slide,
+which should hopefully synthesize the mess.
 
 
 ## Install
@@ -10,6 +14,9 @@ To install, download the source code and run:
     pip install .
 
 In the top-level directory.
+
+
+## Run
 
 The software can be run by issuing:
 

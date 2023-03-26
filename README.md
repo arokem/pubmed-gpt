@@ -2,7 +2,7 @@
 
 Use gpt to summarize articles from pubmed as a slide presentation. The goal of
 this software is to find the top 8 articles on a topic in pubmed (based on
-pubmed's "relevance" criterion) and ask GPT to summarize the abstract of each
+pubmed's "relevance" criterion -- you'll need my fork of [pymed](https://github.com/arokem/pymed) for that) and ask GPT to summarize the abstract of each
 article as a single slide, providing also a title slide and a summary slide,
 which should hopefully synthesize the mess.
 

@@ -32,20 +32,15 @@ def query_gpt(
     Query pubmed and then query gpt
     """
     query = f"""
-    Please create a presentation that summarizes each of the following abstracts with at most 6 bullet points.
+    Please create a presentation that summarizes each of the following abstracts with at most 6 bullet points each. One slide for each of the articles. On each slide, include the title of the article, and the name of the authors. Avoid jargon.
 
-    Please create this in the remark.js markdown format, with one slide for each of the articles.
-
-    On each slide, include the title of the article, the name of the authors and journal and a link to the article
-
-    Add a slide for the title, which should be "{topic}" and a slide for summary that summarizes all of the abstracts.
-
+    Add a slide for the title, which should be "{topic}" and a slide that summarizes all of the abstracts.
     {abstracts}"""
 
     response = openai.ChatCompletion.create(
     model=model,
     messages=[
-        {"role": "system", "content": f'You are a helpful assistant. Your response should be a remark.js presentation in markdown format.'},
+        {"role": "system", "content": 'You are a helpful assistant. Your response should be a remark.js presentation in markdown format.'},
         {"role": "user", "content": query},
         ]
     )
@@ -62,8 +57,8 @@ def query_gpt(
               help='OpenAI API key is required to query GPT')
 def main(topic: str,
          apikey: str,
-         model: Optional[str]="gpt-3.5-turbo",
-         tofile: Optional[str]="presentation.md"):
+         model: Optional[str] = "gpt-3.5-turbo",
+         tofile: Optional[str] = "presentation.md"):
 
     abstracts = query_pubmed(topic)
 

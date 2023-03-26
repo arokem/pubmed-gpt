@@ -1,16 +1,15 @@
 from typing import Optional
 import click
-import uuid
 
 from pymed import PubMed
 import openai
 
 
-def query_pubmed(topic: str, email: str, max_results: Optional[int]=5) -> str:
+def query_pubmed(topic: str, max_results: Optional[int]=5) -> str:
     """
     Get abstracts for a topic from pubmed
     """
-    pubmed = PubMed(tool=f"pmg{uuid.uuid1()}", email=email)
+    pubmed = PubMed(tool="pmg", email="arokem@uw.edu")
     pm_results = list(pubmed.query(topic, max_results=max_results))
     abstracts = """ \n""".join([
     f"""Title: {aa.title}
@@ -35,7 +34,7 @@ def query_gpt(
     query = f"""
     Please create a presentation that summarizes each of the following abstracts with at most 6 bullet points.
 
-    Please create this in the remark.js markdown format, with one slide for each of the article below.
+    Please create this in the remark.js markdown format, with one slide for each of the articles.
 
     On each slide, include the title of the article, the name of the authors and journal and a link to the article
 
@@ -57,20 +56,16 @@ def query_gpt(
 @click.command()
 @click.option('--topic', prompt="Please enter topic to query",
               help='Topic to query')
-@click.option('--email',
-              envvar='EMAIL',
-              help='Email address is required to query pubmed')
 @click.option('--apikey',
               default=None,
               envvar='OPENAI_API_KEY',
               help='OpenAI API key is required to query GPT')
 def main(topic: str,
-         email: str,
          apikey: str,
          model: Optional[str]="gpt-3.5-turbo",
          tofile: Optional[str]="presentation.md"):
 
-    abstracts = query_pubmed(topic, email)
+    abstracts = query_pubmed(topic)
 
     openai.api_key = apikey
     response = query_gpt(
